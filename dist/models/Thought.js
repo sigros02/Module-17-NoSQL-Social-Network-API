@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import { DateTime } from "luxon";
 const thoughtSchema = new Schema({
     thoughtText: {
         type: String,
@@ -10,6 +11,9 @@ const thoughtSchema = new Schema({
         type: Date,
         default: Date.now(),
         // need to add getter to format the date
+        get: (createdAt) => {
+            return DateTime.fromJSDate(createdAt).toLocaleString(DateTime.DATETIME_FULL);
+        },
     },
     username: {
         type: String,
@@ -24,6 +28,7 @@ const thoughtSchema = new Schema({
 }, {
     toJSON: {
         virtuals: true,
+        getters: true,
     },
     timestamps: true,
 });

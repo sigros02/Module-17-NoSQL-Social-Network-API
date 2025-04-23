@@ -1,8 +1,9 @@
 import { Schema, model, type Document } from "mongoose";
+import { DateTime } from "luxon";
 
 interface IThoughts extends Document {
   thoughtText: string;
-  createdAt: Date;
+  createdAt: Date | string;
   username: string;
   reactions: Schema.Types.ObjectId[];
 }
@@ -19,6 +20,11 @@ const thoughtSchema = new Schema<IThoughts>(
       type: Date,
       default: Date.now(),
       // need to add getter to format the date
+      get: (createdAt: Date) => {
+        return DateTime.fromJSDate(createdAt).toLocaleString(
+          DateTime.DATETIME_FULL
+        );
+      },
     },
     username: {
       type: String,
@@ -34,6 +40,7 @@ const thoughtSchema = new Schema<IThoughts>(
   {
     toJSON: {
       virtuals: true,
+      getters: true,
     },
     timestamps: true,
   }
