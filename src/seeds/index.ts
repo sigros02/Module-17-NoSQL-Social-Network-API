@@ -1,7 +1,7 @@
 import db from "../config/connection.js";
-import { User } from "../models/index.js";
+import { User, Thought } from "../models/index.js";
 import cleanDB from "./cleanDB.js";
-import { usernames, emails } from "./data.js";
+import { usernames, emails, thoughts } from "./data.js";
 
 try {
   await db();
@@ -23,6 +23,7 @@ try {
 
   // Add users to the collection and await the results
   const userData = await User.create(users);
+  await Thought.create(thoughts);
 
   // update collection to add friends
   for (let i = 0; i < userData.length; i++) {
@@ -37,6 +38,7 @@ try {
 
   // Log out the seed data to indicate what should appear in the database
   console.table(users);
+  console.table(thoughts);
   console.info("Seeding complete! 🌱");
   process.exit(0);
 } catch (error) {
