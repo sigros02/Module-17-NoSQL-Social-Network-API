@@ -15,32 +15,32 @@ export const getAllThoughts = async (_req: Request, res: Response) => {
   }
 };
 
-// /**
-//  * GET User by id /users/:id
-//  * @param string id
-//  * @returns a single User object
-//  */
-// export const getUserById = async (req: Request, res: Response) => {
-//   const { userId } = req.params;
-//   console.log("****************************************");
-//   console.log(userId);
-//   try {
-//     const user = await User.findById(userId).populate("username");
-//     if (user) {
-//       res.json({
-//         user,
-//       });
-//     } else {
-//       res.status(404).json({
-//         message: "User not found",
-//       });
-//     }
-//   } catch (error: any) {
-//     res.status(500).json({
-//       message: error.message,
-//     });
-//   }
-// };
+/**
+ * GET Thought by id /thoughts/:id
+ * @param string id
+ * @returns a single Thought object
+ */
+export const getThoughtById = async (req: Request, res: Response) => {
+  const { thoughtId } = req.params;
+  console.log("****************************************");
+  console.log(thoughtId);
+  try {
+    const thought = await Thought.findById(thoughtId).populate("thoughtText");
+    if (thought) {
+      res.json({
+        thought,
+      });
+    } else {
+      res.status(404).json({
+        message: "Thought not found",
+      });
+    }
+  } catch (error: any) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
 
 // /**
 //  * POST to create new user /users

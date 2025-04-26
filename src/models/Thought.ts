@@ -46,6 +46,10 @@ const thoughtSchema = new Schema<IThoughts>(
   }
 );
 
+thoughtSchema.virtual("reactionCount").get(function (this: IThoughts) {
+  return this.reactions.length;
+});
+
 const Thought = model<IThoughts>("Thought", thoughtSchema);
 
 export default Thought;
