@@ -4,6 +4,7 @@ interface IUser extends Document {
   username: string;
   email: string;
   friends: Schema.Types.ObjectId[]; // Array of ObjectIds
+  thoughts: Schema.Types.ObjectId[]; // Array of ObjectIds
 }
 
 const userSchema = new Schema<IUser>(
@@ -26,7 +27,7 @@ const userSchema = new Schema<IUser>(
       max_length: 50,
     },
     friends: [{ type: Schema.Types.ObjectId, ref: "User" }], // Array of ObjectIds referencing User
-    // thoughts: [thoughtSchema],
+    thoughts: [{type: Schema.Types.ObjectId, ref: "Thought"}], // Array of ObjectIds referencing Thought
   },
   {
     toJSON: {

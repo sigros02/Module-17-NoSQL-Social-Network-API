@@ -18,7 +18,7 @@ const userSchema = new Schema({
         max_length: 50,
     },
     friends: [{ type: Schema.Types.ObjectId, ref: "User" }], // Array of ObjectIds referencing User
-    // thoughts: [thoughtSchema],
+    thoughts: [{ type: Schema.Types.ObjectId, ref: "Thought" }], // Array of ObjectIds referencing Thought
 }, {
     toJSON: {
         getters: true,

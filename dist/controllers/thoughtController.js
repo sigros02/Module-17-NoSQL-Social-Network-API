@@ -1,4 +1,4 @@
-import { Thought } from "../models/index.js";
+import { Thought, User } from "../models/index.js";
 // GET all thoughts /thoughts
 export const getAllThoughts = async (_req, res) => {
     try {
@@ -39,19 +39,28 @@ export const getThoughtById = async (req, res) => {
         });
     }
 };
-// /**
-//  * POST to create new user /users
-//  * @param object user
-//  * @returns a single User object
-//  */
-// export const createUser = async (req: Request, res: Response) => {
-//   try {
-//     const user = await User.create(req.body);
-//     res.json(user);
-//   } catch (err) {
-//     res.status(500).json(err);
-//   }
-// };
+/**
+ * POST to create new thought /thoughts
+ * @param object thought
+ * @returns a single Thought object
+ */
+export const createThought = async (req, res) => {
+    try {
+        console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+        console.log(req.body);
+        const thought = await Thought.create(req.body);
+        const user = await User.findOneAndUpdate({ _id: req.body.userId }, { $addToSet: { thoughts: thought._id } }, { new: true });
+        if (!user) {
+            return res.status(404).json({ message: "No user found with that ID :(" });
+        }
+        res.status(200).json(thought);
+        return;
+    }
+    catch (err) {
+        res.status(500).json(err);
+        return;
+    }
+};
 // /**
 //  * PUT User based on id /users/:id
 //  * @param object id

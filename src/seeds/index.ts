@@ -24,13 +24,16 @@ try {
   // Add users to the collection and await the results
   const userData = await User.create(users);
   await Thought.create(thoughts);
+  const thoughtData = await Thought.find();
 
   // update collection to add friends
   for (let i = 0; i < userData.length; i++) {
     const friendId = userData[Math.floor(Math.random() * userData.length)]._id;
+    const thoughtId =
+      thoughtData[Math.floor(Math.random() * thoughtData.length)]._id;
     await User.findByIdAndUpdate(
       { _id: userData[i]._id },
-      { $addToSet: { friends: friendId } },
+      { $addToSet: { friends: friendId, thoughts: thoughtId } },
       { new: true }
     );
     console.log(`Added friend ${friendId} to user ${userData[i]._id}`);
