@@ -61,57 +61,49 @@ export const createThought = async (req, res) => {
         return;
     }
 };
-// /**
-//  * PUT User based on id /users/:id
-//  * @param object id
-//  * @returns a single User object
-//  */
-// export const updateUser = async (req: Request, res: Response) => {
-//   try {
-//     const user = await User.findOneAndUpdate(
-//       { _id: req.params.userId },
-//       { $set: req.body },
-//       { runValidators: true, new: true }
-//     );
-//     if (!user) {
-//       res.status(404).json({ message: "No user with this id!" });
-//     }
-//     res.json(user);
-//   } catch (error: any) {
-//     res.status(400).json({
-//       message: error.message,
-//     });
-//   }
-// };
-// /**
-//  * DELETE User based on id /users/:id
-//  * @param string id
-//  * @returns string
-//  */
-// export const deleteUser = async (req: Request, res: Response) => {
-//   try {
-//     const user = await User.findOneAndDelete({
-//       _id: req.params.userId,
-//     });
-//     if (!user) {
-//       return res.status(404).json({ message: "No such user exists" });
-//     }
-//     // const thought = await Thought.findOneAndUpdate(
-//     //   { users: req.params.userId },
-//     //   { $pull: { users: req.params.userId } },
-//     //   { new: true }
-//     // );
-//     // if (!thought) {
-//     //   return res.status(404).json({
-//     //     message: "User deleted, but no thoughts found",
-//     //   });
-//     // }
-//     return res.json({ message: "User successfully deleted" });
-//   } catch (err) {
-//     console.log(err);
-//     return res.status(500).json(err);
-//   }
-// };
+/**
+ * PUT Thought based on id /thoughts/:id
+ * @param object id
+ * @returns a single Thought object
+ */
+export const updateThought = async (req, res) => {
+    try {
+        const thought = await Thought.findOneAndUpdate({ _id: req.params.thoughtId }, { $set: req.body }, { runValidators: true, new: true });
+        if (!thought) {
+            return res.status(404).json({ message: "No thought with this id!" });
+        }
+        res.json(thought);
+        return;
+    }
+    catch (error) {
+        res.status(400).json({
+            message: error.message,
+        });
+        return;
+    }
+};
+/**
+ * DELETE Thought based on id /thoughts/:id
+ * @param string id
+ * @returns string
+ */
+export const deleteThought = async (req, res) => {
+    try {
+        const thought = await Thought.findByIdAndDelete(req.params.thoughtId);
+        if (!thought) {
+            return res.status(404).json({ message: "No thought with this id!" });
+        }
+        // Remove the thought's _id from any user's `thoughts` array
+        await User.updateMany({ thoughts: req.params.thoughtId }, { $pull: { thoughts: req.params.thoughtId } });
+        res.json({ message: "Thought successfully deleted" });
+        return;
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json(err);
+        return;
+    }
+};
 // /**
 //  * POST Friend based on /users/:userId/friends
 //  * @param string id

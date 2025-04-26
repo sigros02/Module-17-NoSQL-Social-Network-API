@@ -68,65 +68,60 @@ export const createThought = async (req: Request, res: Response) => {
   }
 };
 
-// /**
-//  * PUT User based on id /users/:id
-//  * @param object id
-//  * @returns a single User object
-//  */
-// export const updateUser = async (req: Request, res: Response) => {
-//   try {
-//     const user = await User.findOneAndUpdate(
-//       { _id: req.params.userId },
-//       { $set: req.body },
-//       { runValidators: true, new: true }
-//     );
+/**
+ * PUT Thought based on id /thoughts/:id
+ * @param object id
+ * @returns a single Thought object
+ */
+export const updateThought = async (req: Request, res: Response) => {
+  try {
+    const thought = await Thought.findOneAndUpdate(
+      { _id: req.params.thoughtId },
+      { $set: req.body },
+      { runValidators: true, new: true }
+    );
 
-//     if (!user) {
-//       res.status(404).json({ message: "No user with this id!" });
-//     }
+    if (!thought) {
+      return res.status(404).json({ message: "No thought with this id!" });
+    }
 
-//     res.json(user);
-//   } catch (error: any) {
-//     res.status(400).json({
-//       message: error.message,
-//     });
-//   }
-// };
+    res.json(thought);
+    return;
+  } catch (error: any) {
+    res.status(400).json({
+      message: error.message,
+    });
+    return;
+  }
+};
 
-// /**
-//  * DELETE User based on id /users/:id
-//  * @param string id
-//  * @returns string
-//  */
+/**
+ * DELETE Thought based on id /thoughts/:id
+ * @param string id
+ * @returns string
+ */
+export const deleteThought = async (req: Request, res: Response) => {
+  try {
+    const thought = await Thought.findByIdAndDelete(req.params.thoughtId);
 
-// export const deleteUser = async (req: Request, res: Response) => {
-//   try {
-//     const user = await User.findOneAndDelete({
-//       _id: req.params.userId,
-//     });
+    if (!thought) {
+      return res.status(404).json({ message: "No thought with this id!" });
+    }
 
-//     if (!user) {
-//       return res.status(404).json({ message: "No such user exists" });
-//     }
+    // Remove the thought's _id from any user's `thoughts` array
+    await User.updateMany(
+      { thoughts: req.params.thoughtId },
+      { $pull: { thoughts: req.params.thoughtId } }
+    );
 
-//     // const thought = await Thought.findOneAndUpdate(
-//     //   { users: req.params.userId },
-//     //   { $pull: { users: req.params.userId } },
-//     //   { new: true }
-//     // );
-
-//     // if (!thought) {
-//     //   return res.status(404).json({
-//     //     message: "User deleted, but no thoughts found",
-//     //   });
-//     // }
-
-//     return res.json({ message: "User successfully deleted" });
-//   } catch (err) {
-//     console.log(err);
-//     return res.status(500).json(err);
-//   }
-// };
+    res.json({ message: "Thought successfully deleted" });
+    return;
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
+    return;
+  }
+};
 
 // /**
 //  * POST Friend based on /users/:userId/friends
