@@ -1,5 +1,12 @@
-import { Schema, model, type Document } from "mongoose";
+import { Schema, Types, model, type Document } from "mongoose";
 import { DateTime } from "luxon";
+
+interface IReaction extends Document {
+  reactionId: Schema.Types.ObjectId;
+  reactionBody: string;
+  username: string;
+  createdAt: Date | string;
+}
 
 interface IThoughts extends Document {
   thoughtText: string;
@@ -7,6 +14,39 @@ interface IThoughts extends Document {
   username: string;
   reactions: Schema.Types.ObjectId[];
 }
+
+const reactionSchema = new Schema<IReaction>(
+  {
+    reactionId: {
+      type: Schema.Types.ObjectId,
+      default: () => new Types.ObjectId(),
+    },
+    reactionBody: {
+      type: String,
+      required: true,
+      max_length: 280,
+    },
+    username: {
+      type: String,
+      required: true,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now(),
+      // need to add getter to format the date
+      get: (createdAt: Date) => {
+        return DateTime.fromJSDate(createdAt).toLocaleString(
+          DateTime.DATETIME_FULL
+        );
+      },
+    },
+  },
+  {
+    toJSON: {
+      getters: true,
+    },
+  }
+);
 
 const thoughtSchema = new Schema<IThoughts>(
   {
@@ -30,12 +70,7 @@ const thoughtSchema = new Schema<IThoughts>(
       type: String,
       required: true,
     },
-    reactions: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "reaction",
-      },
-    ],
+    reactions: [reactionSchema], // Array of reactionSchema
   },
   {
     toJSON: {

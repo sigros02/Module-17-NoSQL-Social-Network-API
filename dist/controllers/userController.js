@@ -1,4 +1,4 @@
-import { User } from "../models/index.js";
+import { User, Thought } from "../models/index.js";
 // GET all users /users
 export const getAllUsers = async (_req, res) => {
     try {
@@ -85,16 +85,12 @@ export const deleteUser = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: "No such user exists" });
         }
-        // const thought = await Thought.findOneAndUpdate(
-        //   { users: req.params.userId },
-        //   { $pull: { users: req.params.userId } },
-        //   { new: true }
-        // );
-        // if (!thought) {
-        //   return res.status(404).json({
-        //     message: "User deleted, but no thoughts found",
-        //   });
-        // }
+        const thought = await Thought.deleteMany({ username: user.username });
+        if (!thought) {
+            return res.status(404).json({
+                message: "User deleted, but no thoughts found",
+            });
+        }
         return res.json({ message: "User successfully deleted" });
     }
     catch (err) {

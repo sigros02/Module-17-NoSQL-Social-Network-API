@@ -1,5 +1,32 @@
-import { Schema, model } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 import { DateTime } from "luxon";
+const reactionSchema = new Schema({
+    reactionId: {
+        type: Schema.Types.ObjectId,
+        default: () => new Types.ObjectId(),
+    },
+    reactionBody: {
+        type: String,
+        required: true,
+        max_length: 280,
+    },
+    username: {
+        type: String,
+        required: true,
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now(),
+        // need to add getter to format the date
+        get: (createdAt) => {
+            return DateTime.fromJSDate(createdAt).toLocaleString(DateTime.DATETIME_FULL);
+        },
+    },
+}, {
+    toJSON: {
+        getters: true,
+    },
+});
 const thoughtSchema = new Schema({
     thoughtText: {
         type: String,
@@ -19,12 +46,7 @@ const thoughtSchema = new Schema({
         type: String,
         required: true,
     },
-    reactions: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "reaction",
-        },
-    ],
+    reactions: [reactionSchema], // Array of reactionSchema
 }, {
     toJSON: {
         virtuals: true,

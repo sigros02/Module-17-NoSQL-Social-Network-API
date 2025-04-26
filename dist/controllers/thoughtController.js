@@ -104,47 +104,47 @@ export const deleteThought = async (req, res) => {
         return;
     }
 };
-// /**
-//  * POST Friend based on /users/:userId/friends
-//  * @param string id
-//  * @param object friend
-//  * @returns object user
-//  */
-// export const addFriend = async (req: Request, res: Response) => {
-//   console.log("You are adding a friend");
-//   console.log(req.body);
-//   try {
-//     const user = await User.findOneAndUpdate(
-//       { _id: req.params.userId },
-//       { $addToSet: { friends: req.body } },
-//       { runValidators: true, new: true }
-//     );
-//     if (!user) {
-//       return res.status(404).json({ message: "No user found with that ID :(" });
-//     }
-//     return res.json(user);
-//   } catch (err) {
-//     return res.status(500).json(err);
-//   }
-// };
-// /**
-//  * DELETE Friend based on /users/:userID/friends
-//  * @param string friendId
-//  * @param string userId
-//  * @returns object user
-//  */
-// export const removeFriend = async (req: Request, res: Response) => {
-//   try {
-//     const user = await User.findOneAndUpdate(
-//       { _id: req.params.userId },
-//       { $pull: { friends: req.params.friendId } },
-//       { runValidators: true, new: true }
-//     );
-//     if (!user) {
-//       return res.status(404).json({ message: "No user found with that ID :(" });
-//     }
-//     return res.json(user);
-//   } catch (err) {
-//     return res.status(500).json(err);
-//   }
-// };
+/**
+ * POST to create a reaction stored in a single thought's reactions array
+ * /thoughts/:thoughtId/reactions
+ * @param object reaction
+ * @returns a single Thought object
+ */
+export const createReaction = async (req, res) => {
+    try {
+        const thought = await Thought.findOneAndUpdate({ _id: req.params.thoughtId }, { $addToSet: { reactions: req.body } }, { runValidators: true, new: true });
+        if (!thought) {
+            return res.status(404).json({ message: "No thought with this id!" });
+        }
+        res.json(thought);
+        return;
+    }
+    catch (error) {
+        res.status(400).json({
+            message: error.message,
+        });
+        return;
+    }
+};
+/**
+ * DELETE to delete a reaction stored in a single thought's reactions array
+ * /thoughts/:thoughtId/reactions/reactionId
+ * @param object reaction
+ * @returns a single Thought object
+ */
+export const deleteReaction = async (req, res) => {
+    try {
+        const thought = await Thought.findOneAndUpdate({ _id: req.params.thoughtId }, { $pull: { reactions: { reactionId: req.params.reactionId } } }, { runValidators: true, new: true });
+        if (!thought) {
+            return res.status(404).json({ message: "No thought with this id!" });
+        }
+        res.json(thought);
+        return;
+    }
+    catch (error) {
+        res.status(400).json({
+            message: error.message,
+        });
+        return;
+    }
+};
